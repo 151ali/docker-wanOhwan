@@ -1,0 +1,30 @@
+# NB : user `docker-compose up --build`
+
+version: '3'
+
+services:
+  # app service 
+  app:
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8080"
+    restart: unless-stopped
+    depends_on: 
+      - redis # start redis service first
+    environment: 
+      REDIS_URL: redis:6379  
+    networks: #Networks to join (Services on the same network can communicate with each other using their name)
+      - backend
+
+  # redis seervice
+  redis:
+    image: "redis:latest"
+    restart: unless-stopped
+    networks: 
+      - backend
+
+# Networks to be created to facilitate communication between containers
+networks:
+  backend: 
